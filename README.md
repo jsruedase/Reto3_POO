@@ -69,6 +69,7 @@ classDiagram
 
 ```
 
+``` python
 """
 There are 10 items on the menu, which have their own prices. However, if certain items are ordered together, 
 a discount can be applied to the combo. The combos are:
@@ -288,4 +289,4 @@ if __name__ == "__main__":
     print(f"Total price: {order.calculate_total()}")
     print(f"Total price according to payment method and discount combos: {order.apply_discount(order.calculate_total())}")
 
-
+```
