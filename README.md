@@ -290,3 +290,174 @@ if __name__ == "__main__":
     print(f"Total price according to payment method and discount combos: {order.apply_discount(order.calculate_total())}")
 
 ```
+
+EJERCICIO EN CLASE, LÍNEA PARAMETRIZADA Y RECTÁNGULO CONSTRUIDO A PARTIR DE 4 LÍNEAS
+
+``` python
+import math
+
+class Point():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        
+class Rectangle():
+    def __init__(self, method, *args):
+        self.method = method
+
+        if len(args) == 3:
+            point = Point(args[0].x, args[0].y)
+            width = args[1]
+            height = args[2]    
+            
+        elif len(args) == 2:
+            point1 = Point(args[0].x, args[0].y)
+            point2 = Point(args[1].x, args[1].y)
+            
+        elif len(args) == 4:
+            line1 = args[0]
+            line2 = args[1]
+            line3 = args[2]
+            line4 = args[3]
+
+        
+        if method == "1":
+            self.width = width
+            self.height = height
+            self.point_bottom_left_corner = point
+
+        elif method == "2":
+            self.width = width
+            self.height = height
+            self.point_center = point
+
+        elif method == "3":
+            self.point1 = point1
+            self.point2 = point2
+            self.width = abs(point1.x - point2.x)
+            self.height = abs(point1.y - point2.y)
+            
+        elif method == "4":
+            """
+            Dadas 4 lineas, debemos ver que satisfacen las condiciones para formar un rectángulo: que tengan los lados
+            paralelos dos a dos y que estos tengan longitudes iguales. Faltaría verificar que los lados se corten unos a otros
+            sin embargo se asume que los puntos de fin y comienzo de las lineas sean 4 en total, es decir, que donde empiece una linea termine la otra
+            """
+            if (len(set([line1.length, line2.length, line3.length, line4.length])) == 2 or len(set([line1.length, line2.length, line3.length, line4.length])) == 1) and len(set([line1.slope, line2.slope, line3.slope, line4.slope])) == 2:
+                self.width = min([line1.length, line2.length, line3.length, line4.length])
+                self.height = max([line1.length, line2.length, line3.length, line4.length])
+                print("Se ha construido un rectángulo")
+            else:
+                print("No se puede construir un rectángulo")
+            
+        
+    def compute_area(self):
+        print(f"El área del rectángulo es {self.width * self.height}") 
+
+    def compute_perimeter(self):   
+        print(f"El perímetro del rectángulo es {2 * (self.width + self.height)}")
+
+    def compute_interference_point(self, point):
+        if point.x >= self.point_bottom_left_corner.x and point.x <= self.point_bottom_left_corner.x + self.width and point.y >= self.point_bottom_left_corner.y and point.y <= self.point_bottom_left_corner.y + self.height:
+            print(f"El punto {point.x, point.y} está dentro del rectángulo")
+        else:
+            print(f"El punto {point.x, point.y} está fuera del rectángulo")
+    
+
+class Line:
+    
+    def __init__(self, start, end) -> None:
+        self.start = start
+        self.end = end
+        self.length = self.compute_length()
+        self.slope = self.compute_slope()
+
+    def compute_length(self):
+        length = math.sqrt((self.start.x - self.end.x)**2 + (self.start.y - self.end.y)**2)
+        return round(length,2)
+    
+    def compute_slope(self):
+        try:
+            m = (self.end.y - self.start.y)/(self.end.x - self.start.x)
+            return round(m,2)
+        except:
+            return float("inf")
+        
+
+    def compute_horizontal_cross(self):
+        pos_x_coordinate = (self.slope * self.start.x - self.start.y)/self.slope
+
+        if pos_x_coordinate >= self.start.x and pos_x_coordinate <= self.end.x:
+            return True
+        else:
+            return False
+        
+    def compute_vertical_cross(self):
+        pos_y_coordinate = self.start.y - (self.slope*self.start.x)
+
+        if pos_y_coordinate >= self.start.y and pos_y_coordinate <= self.end.y:
+            return True
+        else:
+            return False
+    
+    def discretize_line(self, number_of_sections):
+        array_of_points = []
+        distance_points = self.length / number_of_sections
+        
+        if self.slope == float("inf"):
+            for i in range(number_of_sections):
+                array_of_points.append(Point(self.start.x, self.start.y + i*distance_points))
+        if self.slope == 0:
+            for i in range(number_of_sections):
+                array_of_points.append(Point(self.start.x + i*distance_points, self.start.y))
+        else:
+            for i in range(number_of_sections):
+                array_of_points.append(Point(self.start.x + i*distance_points, self.start.y + self.slope * i*distance_points))
+        for point in array_of_points:
+            print(f"({point.x}, {point.y})")
+        
+if __name__ == "__main__":
+    
+    method = input("Ingrese el método de construcción del rectángulo: 1, 2, 3, 4: ")
+    if method == "4":
+        print("Ingrese las coordenadas de los 4 puntos que forman el rectángulo en sentido antihorario: ")
+        point1x = input("Ingrese la coordenada x del punto 1: ")
+        point1y = input("Ingrese la coordenada y del punto 1: ")
+        point2x = input("Ingrese la coordenada x del punto 2: ")
+        point2y = input("Ingrese la coordenada y del punto 2: ")
+        point3x = input("Ingrese la coordenada x del punto 3: ")
+        point3y = input("Ingrese la coordenada y del punto 3: ")
+        point4x = input("Ingrese la coordenada x del punto 4: ")
+        point4y = input("Ingrese la coordenada y del punto 4: ")
+        line1 = Line(Point(int(point1x), int(point1y)), Point(int(point2x), int(point2y)))
+        line2 = Line(Point(int(point2x), int(point2y)), Point(int(point3x), int(point3y)))
+        line3 = Line(Point(int(point3x), int(point3y)), Point(int(point4x), int(point4y)))
+        line4 = Line(Point(int(point4x), int(point4y)), Point(int(point1x), int(point1y)))
+        rect = Rectangle(method, line1, line2, line3, line4)
+        try:
+            rect.compute_area()
+            rect.compute_perimeter()
+        except:
+            pass
+    elif method == 2 or method == 1:
+        x = input("Ingrese la coordenada x del punto: ")
+        y = input("Ingrese la coordenada y del punto: ")
+        width = input("Ingrese el ancho del rectángulo: ")
+        height = input("Ingrese el alto del rectángulo: ")
+        point = Point(int(x), int(y))
+        rect = Rectangle(method, point, int(width), int(height))
+        rect.compute_area()
+        rect.compute_perimeter()
+        
+    elif method == 3:
+        x1 = input("Ingrese la coordenada x del punto 1: ")
+        y1 = input("Ingrese la coordenada y del punto 1: ")
+        x2 = input("Ingrese la coordenada x del punto 2: ")
+        y2 = input("Ingrese la coordenada y del punto 2: ")
+        point1 = Point(int(x1), int(y1))
+        point2 = Point(int(x2), int(y2))
+        rect = Rectangle(method, point1, point2)
+        rect.compute_area()
+        rect.compute_perimeter()
+        
+```
